@@ -62,7 +62,9 @@ public ResponseEntity<?> postEmployee(Employee employee) {
         }
 
         Employee manager = optionalManager.get();
+        //check if the given manager id is of a manager itself and not an associate
         if (manager.getManagerId() == 0 && "account manager".equals(manager.getDesignation())) {
+            //check if the department matches
             if (manager.getDepartment().equals(employee.getDepartment())) {
                 // Save the associate
                 employee.setCreatedTime(LocalDateTime.now());
@@ -116,8 +118,6 @@ public ResponseEntity<?> postEmployee(Employee employee) {
         List<Employee> empList = employeeRepo.findAllById(employeeId);
         String oldManagerName;
         String newManagerName;
-        //System.out.println(employeeId);
-        //System.out.println(newManagerid);
         if(empList.isEmpty()){
             result.put("message ","Employee with ID " + employeeId + " not found.");
                     return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
@@ -125,22 +125,17 @@ public ResponseEntity<?> postEmployee(Employee employee) {
             for(Employee emp : empList){
                 if(emp.getManagerId() == (newManagerid)){
                     result.put("message","Employee is currently under the given manager.No changes required");
-                    return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
+                    return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
                 }
                 else{
                     
                     try{
                         Optional<Employee> m = employeeRepo.findById(newManagerid);
-                        System.out.println(m);
                         if(m.isPresent()){
-                           // newManagerName = m.getName();
                            Employee newManager = m.get();
                            newManagerName = newManager.getName();
-
                            int oldManagerId = emp.getManagerId();
-                           System.out.println(oldManagerId);
                            Optional<Employee> e = employeeRepo.findById(oldManagerId);
-                           System.out.println(e);
                            oldManagerName = "tttttt";
                            if(e.isPresent()){
                                Employee oldmanager = e.get();
@@ -148,12 +143,14 @@ public ResponseEntity<?> postEmployee(Employee employee) {
                            }
                            
                            emp.setManagerId(newManagerid);
-                          // String newDept = e.getDepartment();
-                           //emp.setDepartment(newDept);
+                           emp.setDepartment(newManager.getDepartment());
                            employeeRepo.save(emp);
                            result.put("message ",""+ emp.getName()+"'s manager has been successfully changed from "+
                            oldManagerName +" to "+ newManagerName+".");
-                        }                       
+                        }else{
+                            result.put("message","New manager not found");
+                            return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
+                        }                     
                     }catch(NullPointerException n){
                         System.out.println(n);
                     }

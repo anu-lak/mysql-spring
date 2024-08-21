@@ -1,3 +1,4 @@
+/*
 package com.example.rest_api.exception;
  
 import java.util.Arrays;
@@ -52,3 +53,4 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+*/

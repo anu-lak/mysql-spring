@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public interface EmployeeProjection {
     String getName();
-    String getId();
+    int getId();
     String getDesignation();
     String getDepartment();
     String getEmail();

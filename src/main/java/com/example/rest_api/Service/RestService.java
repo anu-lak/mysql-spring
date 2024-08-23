@@ -85,7 +85,7 @@ public ResponseEntity<?> postEmployee(Employee employee) {
     //GET
      public Map<String,Object> getEmployee(Integer managerid,Integer yearsOfExperience){
         Map<String,Object> result = new LinkedHashMap<>();
-        result.put("message","successfully fetched");
+        //result.put("message","successfully fetched");
         List<Object> detailList = new ArrayList<>();
         //creating a managerList to find the manager with the given manager id;
             List<Employee> managerList = employeeRepo.findManagers();
@@ -107,8 +107,16 @@ public ResponseEntity<?> postEmployee(Employee employee) {
                     detailList.add(managerEmpMap);
                 }
             }
+        // result.put("details", detailList);
+        // return result;
+        if(detailList.isEmpty()){
+            result.put("message","No employees who match the conditions");
+            return result;
+        }else{
+        result.put("message","successfully fetched");
         result.put("details", detailList);
         return result;
+        }
     }
     //UPDATE
     @Transactional
